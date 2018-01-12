@@ -1,0 +1,10 @@
+<a class="uk-modal-close uk-close uk-close-alt"></a>
+<h3>商品简介</h3>
+{% for desc in desc_list %}
+<div class="uk-thumbnail uk-thumbnail-expand">
+    <img src="/static/css/images/detail_{{ pid }}_{{ desc.did }}.jpg" />
+    <div class="uk-thumbnail-caption">
+        {{ desc.desc }}
+    </div>
+</div>
+{% endfor %}

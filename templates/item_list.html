@@ -1,0 +1,104 @@
+{% extends "index.html"%} {% block item_list %}
+<div>
+    <img src="/static/css/images/titlepic.jpg" width="100%">
+</div>
+<div class="uk-width-medium-2-5 uk-container-center">
+    <div class="uk-panel uk-panel-box uk-panel-box-secondary uk-panel-header">
+        <h3>
+            <strong>新鲜水果</strong>
+        </h3>
+        <div class="uk-grid uk-margin-remove">
+            <div class="uk-width-1-1" style="padding:0px">
+                {% for fruit in fruits %}
+                <div class="uk-panel uk-panel-divider">
+                    <div class="uk-grid">
+                        <div class="uk-width-1-2">
+                            <a href="#my-id" class="uk-link-muted detail" data-uk-modal detail-id={{ fruit.pid }} style="text-decoration:none">
+
+                                <img src="/static/css/images/thumbnail_{{ fruit.pid }}.jpg" class="uk-align-left uk-margin-bottom-remove" alt="" width="137px" height="137px">
+                            </a>
+                        </div>
+                        <div class="uk-width-1-2">
+                            <div class="uk-h3" style="margin:0px">{{ fruit.f_type }}1{{ fruit.unit }}</div>
+                            <div style="margin:0px;color: #ff5000;font-weight: bold;font-size: 15px">￥ {{ fruit.unit_price }}.00</div>
+                            <div>
+                                <a class="uk-button uk-button-small uk-icon-minus" style="line-height:2.4" onclick="updateproductnum('{{ fruit.f_type}}', {{ fruit.unit_price }},-1,{{ fruit.pid }}, '{{ fruit.unit }}', 10)"></a>
+                                <input type="text" id="pid_{{ fruit.pid }}" style="text-align:center;height:36px;width:40px" value="0" readonly />
+                                <a class="uk-button uk-button-small uk-icon-plus" style="line-height:2.4" onclick="updateproductnum('{{ fruit.f_type}}', {{ fruit.unit_price }},1,{{ fruit.pid }}, '{{ fruit.unit }}', 10)"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p>
+                    <em>Unbelievable. No fruits here so far.</em>
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<nav class="uk-navbar uk-width-1-1" style="position:fixed;bottom:0px">
+    <div class="uk-navbar-content uk-margin-left">
+        合计:
+        <span style="color:#da314b">￥
+            <span class="total_price">0.00</span>
+        </span>
+    </div>
+    <div class="uk-navbar-content uk-navbar-flip">
+        <div class="uk-button-group">
+            <button class="uk-button uk-button-danger uk-button-large goShopcart" disabled>去购物车<span id="number-badge" class="uk-badge uk-badge-notification uk-badge-success uk-margin-small-left">0</span>
+                </button>
+        </div>
+    </div>
+</nav>
+<!-- This is the modal -->
+<div id="my-id" class="uk-modal">
+    <div class="uk-modal-dialog item-detail" style="top:10%">
+    </div>
+</div>
+
+<form method="post" id="goToCart" action="{{ url_for('my_shop_cart') }}">
+    <input type="text" class="shop" name="shop_item" hidden>
+    <input type="text" class="user_id" name="uid" hidden>
+</form>
+<script src="/static/js/all.js"></script>
+<script src="/static/js/fastclick.min.js"></script>
+<script>
+window.onload = function() {
+    if (window.sessionStorage) {
+        sessionStorage.setItem("tmp_user_id", "{{ user_id }}");
+        getSessionData();
+    } else {
+        // 不支持 sessionStorage，用 Dojo 实现相同功能
+    }
+
+    $(".goShopcart").bind("click", function() {
+        if (window.sessionStorage) {
+            var tmp_value = get_tmp_pid_value();
+            $(".shop").val(tmp_value.join("&&"));
+            $(".user_id").val(sessionStorage.getItem("tmp_user_id"));
+            $("#goToCart").submit();
+        } else {
+            // 不支持 sessionStorage，用 Dojo 实现相同功能
+        }
+    });
+
+    $(".detail").on("click", function() {
+        var x = $(this);
+        $(document).ajaxSend(function(event, xhr, options) {
+            $(".item-detail").html("<i class='uk-icon-spinner uk-icon-spin cm-spinner'></i>");
+        });
+        $.get("{{ url_for('show_item_detail') }}", {
+            "detail-id": x.attr("detail-id")
+        }, function(data) {
+            $(".item-detail").html(data)
+        });
+    });
+}
+
+$(function() {
+    FastClick.attach(document.body);
+});
+</script>
+{% endblock %}

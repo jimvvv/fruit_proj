@@ -1,0 +1,40 @@
+{% extends "index.html"%} 
+{% block history_order_detail %}
+    <nav  class="uk-navbar"><div class="uk-navbar-content uk-navbar-center uk-h3">订单编号:{{ order_number }}</div></nav>
+    <div style="margin:20px;">
+        <h3>订单产品</h3>
+        {% for item in items %}
+        <p>
+          <span>{{ item.fruit}} 1{{ item.unit }} X {{ item.quantity }}</span>
+          <span class="price">单价:{{ item.unit_price }}</span>
+          <span class="price danwei">元</span>
+        </p>
+        {% endfor %}
+        <h3>订单信息</h3>
+        {% if infos.x_man %}
+        <form class="uk-form" action="{{ url_for('change_status', uid = uid, oid = oid) }}" method="post">
+            <select name="status">
+                <option value=2>已发货</option>
+                <option value=3>交易成功</option>
+                <option value=4>退货中</option>
+                <option value=5>退货成功</option>
+                <option value=6>不予处理</option>
+            </select>
+            <button class="uk-button" type="submit">提交</button>
+        </form>
+        {% endif %}
+        <p>状态:{{ infos.status }}</p>
+        <p>备注:{{ infos.comment }}</p>
+        <p>订单编号:{{ order_number }}</p>
+        <p>配送费:{{ infos.express_fee }}</p>
+        <p>产品价格:{{ product_price }}</p>
+        <p style="color:red">订单总价:{{ order_price }}</p>
+        <p>联系人:{{ infos.customer }}</p>
+        <p>联系电话:{{ infos.contact_number }}</p>
+        <p>联系地址:{{ infos.address }}</p>
+        <h3>商家信息</h3>
+        <p>联系电话: 18101871242</p>
+		<p>联系人: 小范</p>
+        <p>联系地址:浦东新区世纪大道1528号5楼</p>
+    </div>
+{% endblock %}

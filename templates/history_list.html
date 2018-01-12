@@ -1,0 +1,12 @@
+{% extends "index.html"%} {% block history_order %}
+<div>
+    <img src="/static/css/images/titlepic.jpg" width="100%">
+</div>
+<ul class="uk-grid uk-grid-width-1-1 uk-text-left uk-margin-remove">
+	{% for order_id in order_ids %}
+    <li><a href="{{ url+'?oid='+ order_id|string() }}"><div class="uk-panel uk-panel-box">订单编号:{{ order_id }}</div></a></li>
+    {% else %}
+    <li><em>对不起,您暂时还没有订单!</em></li>
+    {% endfor %}
+</ul>
+{% endblock %}

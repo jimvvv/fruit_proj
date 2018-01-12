@@ -1,0 +1,28 @@
+{% extends "index.html"%} 
+{% block order %}
+    <h2 style="text-align:center">订单提交成功</h2>
+    <div style="margin:20px;">
+        <p>您的订单提供成功,我们会尽快处理,如有疑问请电话联系我们。</p>
+        <h3>订单产品</h3>
+        {% for item in items %}
+        <p>
+          <span>{{ item.fruit}} 1{{ item.unit }} X {{ item.quantity }}</span>
+          <span class="price">单价:{{ item.unit_price }}</span>
+          <span class="price danwei">元</span>
+        </p>
+        {% endfor %}
+        <h3>订单信息</h3>
+        <p>订单编号:{{ order_number }}</p>
+        <p>备注:{{ infos.comment }}</p>
+        <p>配送费:{{ infos.express_fee }}</p>
+        <p>产品价格:{{ product_price }}</p>
+        <p style="color:red">订单总价:{{ order_price }}</p>
+        <p>联系人:{{ infos.customer }}</p>
+        <p>联系电话:{{ infos.contact_number }}</p>
+        <p>联系地址:{{ infos.address }}</p>
+        <h3>商家信息</h3>
+        <p>联系电话: 18101871242</p>
+		<p>联系人: 小范</p>
+        <p>联系地址: 浦东新区世纪大道1528号5楼</p>
+    </div>
+{% endblock %}

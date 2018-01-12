@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="/static/css/uikit.almost-flat.min.css" />
+    <script src="http://lib.sinaapp.com/js/jquery/1.10.2/jquery-1.10.2.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='js/jquery.min.js') }}">\x3C/script>')</script>
+    <script src="/static/js/uikit.min.js"></script>
+</head>
+
+<body>
+    {% block item_list %}{% endblock item_list %}
+    {% block item_detail %}{% endblock item_detail %}
+    {% block order_detail %}{% endblock order_detail %}
+    {% block order %}{% endblock order %}
+    {% block history_order %}{% endblock history_order %}
+    {% block history_order_detail %}{% endblock history_order_detail %}
+    {% block address %}{% endblock address %}
+
+    <div>Copyright © 2012-2013 MEGO. All Rights Reserved.</div>
+</body>
+
+</html>

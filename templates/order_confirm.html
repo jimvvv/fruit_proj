@@ -1,0 +1,132 @@
+{% extends "index.html"%} {% block order_detail %}
+    <div class="uk-navbar-content uk-navbar-center">
+        <strong>确认下单</strong>
+    </div>
+
+    <hr class="uk-margin-top-remove" />
+    <form class="uk-form uk-form-horizontal">
+        <div>
+            <p class="uk-margin-left">
+                收货人:
+                <span id="receiver"></span>
+                <span id="number"></span>
+            </p>
+            <p class="uk-margin-left">
+                <span id="address"></span>
+            </p>
+        </div>
+
+        <hr />
+
+        <div class="uk-panel" style="padding:15px">
+            <legend>购物信息</legend>
+            {% for fruit in fruits %}
+            <div class="uk-width-medium-1-1" style="border-bottom: 1px solid #d3d3d3;">
+                    <div class="uk-thumbnail uk-thumbnail-mini uk-margin-bottom-remove uk-align-left">
+                        <img src="/static/css/images/thumbnail_{{ fruit.pid }}.jpg" alt="">
+                    </div>
+                    <p>{{ fruit.f_type }}1{{ fruit.unit }}</p>
+                    <p>单价:
+                        <span>￥{{ fruit.unit_price }}.00</span>
+                    </p>
+                    <p>数量:
+                        <span>{{ fruit.quantity }}</span>
+                        <span class="uk-align-right" style="color:#da314b">￥{{ fruit.unit_price|float * fruit.quantity|float }}</span>
+                    </p>
+            </div>
+            {% endfor %}
+
+            <div class="uk-panel uk-margin-top">
+                {% if free %}
+                <p><span class="uk-badge uk-badge-danger">tip:全场免配送费哦~~</span></p>
+                {% else %}
+                <p><span class="uk-badge uk-badge-danger">tip:满50免配送费哦~~</span></p>
+                {% endif %}
+            </div>
+
+            <div class="uk-panel uk-margin-top">
+                <p>备注:<span id="comment"></span></p>
+            </div>
+
+            <div class="uk-panel uk-margin-top">
+                <p>配送费:
+                    {% if free %}
+                    <span class="uk-align-right uk-margin-bottom-remove" style="color:#da314b">￥<span id="ps_price">0.00</span></span>
+                    {% else %}
+                    <span class="uk-align-right uk-margin-bottom-remove" style="color:#da314b">￥<span id="ps_price">8.00</span></span>
+                    {% endif %}
+                </p>
+            </div>
+            {% if gift.gift_type == '1' %}
+            {# '1' is fruit #}
+            <div class="uk-panel uk-margin-top">
+                <p>免费礼品:<span class="uk-align-right uk-alert uk-alert-success" id="gift">{{ gift.gift_content}}</span></p>
+            </div>
+            {% elif gift.gift_type == '2' %}
+            {# '2' is coupon #}
+            <div class="uk-panel uk-margin-top">
+                <p>抵用券:
+                    <span class="uk-align-right" style="color:#da314b">￥<span id="coupon">{{ gift.gift_content}}</span></span>
+                </p>
+            </div>
+            {% endif %}
+            <div class="uk-width-medium-1-1 uk-margin-top uk-align-left">
+                <p>实际付款:
+                    <span class="uk-align-right" style="color:#da314b">￥<span id="total_price"></span></span>
+                </p>
+            </div>
+
+        </div>
+
+        <p>
+            <button class="uk-button uk-button-danger uk-button-large uk-width-1-1 submit_order" type="button">提交订单</button>
+        </p>
+
+    </form>
+
+<form method="post" id="order_info" action="{{ url_for('submit_order',user_id = uid) }}">
+    <input type="text" class="order" name="order_detail" hidden>
+    <input type="text" class="client" name="client_detail" hidden>
+    <input type="text" class="price" name="product_price" hidden>
+    {% if gift %}
+        <input type="text" class="gift" name="promotion_gift" value="{{ [gift.gift_type, gift.gift_content, gift.p_code]|join('|') }}" hidden>
+    {% endif %}
+</form>
+
+<script src="/static/js/all.js"></script>
+<script>
+window.onload = function() {
+    if (window.sessionStorage) {
+        if(sessionStorage.getItem("tmp_client_info")){
+            var tmp_client_info = sessionStorage.getItem("tmp_client_info");
+            var total_price = sessionStorage.getItem("tmp_price");
+            var client_info = tmp_client_info.split("|");     //[receiver, number, address, comment]
+            var ps_fee = parseFloat($("#ps_price").text());
+            {%- if gift.gift_type == '2' %}
+            var coupon = {{ gift.gift_content }};
+            {% else %}
+            var coupon = 0;
+            {% endif %}
+            $("#receiver").text(client_info[0]);
+            $("#number").text(client_info[1]);
+            $("#address").text(client_info[2]);
+            $("#comment").text(client_info[3]);
+            $("#total_price").text((parseFloat(total_price) + ps_fee - parseFloat(coupon)).toFixed(2));
+            $(".submit_order").bind("click",function(){
+                var tmp_value = get_valid_pid_value();
+                $(".order").val(tmp_value.join("&&"));
+                $(".client").val(tmp_client_info);
+                $(".price").val(total_price);
+                sessionStorage.clear();
+                $("#order_info").submit();
+            });
+        } else {
+            //Please input the contact information.
+        }
+
+    } else {
+        // 不支持 sessionStorage，用 Dojo 实现相同功能
+    }
+};
+</script>
+{% endblock %}

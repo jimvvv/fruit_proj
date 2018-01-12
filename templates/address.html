@@ -1,0 +1,117 @@
+{% extends "index.html"%} {% block address %}
+<nav class="uk-navbar">
+    <!--<a class="uk-navbar-brand" href="">JS history.back()</a>-->
+    <div class="uk-navbar-content uk-navbar-flip">
+        <button class="uk-button-success" data-uk-modal="{target:'#my-id'}"><i class="uk-icon-plus"></i>
+        </button>
+    </div>
+    <div class="uk-navbar-content uk-navbar-center">
+        <strong>收货人信息</strong>
+    </div>
+</nav>
+<div class="uk-margin" data-uk-switcher>
+{% for user in user_info %}
+{% if user.default %}
+<div class="uk-panel uk-panel-box uk-margin-left uk-margin-right uk-margin address-panel uk-active">
+{% else %}
+<div class="uk-panel uk-panel-box uk-margin-left uk-margin-right uk-margin address-panel">
+{% endif %}
+    <div>
+        <p class="uk-margin-left">
+            <span id="user_name">{{ user.name }}</span>
+            <span id="user_number">{{ user.number }}</span>
+        </p>
+        <p class="uk-margin-left">
+            <span id="user_address">{{ user.address }}</span>
+        </p>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<!-- This is the modal -->
+<div id="my-id" class="uk-modal">
+    <div class="uk-modal-dialog uk-modal-dialog-slide">
+        <form class="uk-form uk-form-horizontal" method="post" action="{{ url_for('my_address', user_id = uid) }}">
+            <div class="uk-panel uk-panel-box uk-panel-box-secondary">
+                <legend>收货人信息</legend>
+                <div class="uk-form-row">
+                    <label class="uk-form-label" for="receiver">收货人</label>
+                    <div class="uk-form-controls">
+                        <input type="text" class="uk-form-width-large" id="receiver" name="receiver" placeholder="Text input" onblur="valStr(this)" />
+                        <span class="uk-form-help-inline" id="receiver_warning" style="color:red"></span>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <label class="uk-form-label" for="number">电话号码</label>
+                    <div class="uk-form-controls">
+                        <input type="tel" class="uk-form-width-large" id="number" name="number" placeholder="Text input" onblur="valNum(this)" />
+                        <span class="uk-form-help-inline" id="number_warning" style="color:red"></span>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <label class="uk-form-label" for="area">地区</label>
+                    <div class="uk-form-controls">
+                        <select id="area" name="area">
+                            <option>金桥</option>
+                            <option>川沙镇</option>
+                            <option>张江镇</option>
+                            <option>唐镇</option>
+                            <option>孙桥</option>
+                        </select>
+                        <span class="uk-form-help-inline" style="color:#38B0DE">亲,目前送货地区只支持川沙，张江，金桥，唐镇，孙桥,请原谅~~~</span>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <label class="uk-form-label" for="address">详细地址</label>
+                    <div class="uk-form-controls">
+                        <input type="text" class="uk-form-width-large" id="address" name="address" placeholder="例:紫薇路235号或川沙路34号6楼" onblur="valStr(this)" />
+                        <span class="uk-form-help-inline" id="address_warning" style="color:red"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-grid uk-margin">
+                <div class="uk-width-1-2">
+                    <button class="uk-button uk-button-danger uk-align-right" type="submit" onclick="return validation()">保存</button>
+                </div>
+                <div class="uk-width-1-2">
+                    <button class="uk-button uk-modal-close" type="button">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="/static/js/all.js"></script>
+<form method="post" id="goToCart" action="{{ url_for('my_shop_cart') }}">
+    <input type="text" class="shop" name="shop_item" hidden />
+    <input type="text" class="address" name="address_item" hidden />
+    <input type="text" class="user_id" name="uid" hidden />
+</form>
+<script>
+window.onload = function() {
+
+    $(".user_id").val(sessionStorage.getItem("tmp_user_id"));
+
+    $(".address-panel").bind("click",function(){
+        
+    var tmp_name = $(this).find("#user_name").text();
+    var tmp_number = $(this).find("#user_number").text();
+    var tmp_address = $(this).find("#user_address").text();
+
+    if (window.sessionStorage) {
+        var tmp_value = get_tmp_pid_value();
+        var tmp_client_info = [tmp_name, tmp_number, tmp_address].join("|");
+        $(".shop").val(tmp_value.join("&&"));
+        $(".address").val(tmp_client_info);
+
+        sessionStorage.setItem("tmp_client_info",tmp_client_info);
+        $("#goToCart").submit();
+    } else {
+        // 不支持 sessionStorage，用 Dojo 实现相同功能
+    }
+    });
+};
+</script>
+{% endblock %}
